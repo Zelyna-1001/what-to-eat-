@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="icon" href="icon-192.png" />
-  <link rel="stylesheet" href="styles.css?v=1" />
+  <link rel="stylesheet" href="styles-macro-v2.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -24,13 +24,15 @@
     </header>
 
     <section class="status-card">
-      <div class="day-toggle" role="tablist" aria-label="日类型">
-        <button id="trainingBtn" class="active" data-day="training">训练日</button>
+      <div class="day-toggle three" role="tablist" aria-label="日类型">
+        <button id="strengthBtn" class="active" data-day="strength">无氧日</button>
+        <button id="cardioBtn" data-day="cardio">有氧日</button>
         <button id="restBtn" data-day="rest">休息日</button>
       </div>
-      <div class="target-grid">
+      <div class="target-grid four">
         <div><span>今日预算</span><strong id="budgetText">¥22</strong></div>
         <div><span>目标热量</span><strong id="calorieTargetText">-- kcal</strong></div>
+        <div><span>蛋白/碳水/脂肪</span><strong id="macroTargetText">--</strong></div>
         <div><span>热量差</span><strong id="deficitText">450 kcal</strong></div>
       </div>
       <p id="profileHint" class="muted small"></p>
@@ -60,21 +62,25 @@
           <button id="resetDemoBtn" class="outline-btn danger-light">重置示例</button>
         </div>
       </div>
+      <p class="muted small food-hint">内置了食堂一荤两素、米饭、全麦面包、玉米、红薯、牛奶、无糖豆浆、鸡蛋、香蕉、无糖酸奶和少量减脂零食。你也可以点右下角 + 添加自己常吃的菜。</p>
       <div class="filters">
         <select id="foodFilterMeal">
           <option value="all">全部餐次</option>
           <option value="breakfast">早餐</option>
           <option value="lunch">午餐</option>
           <option value="dinner">晚餐</option>
-          <option value="snack">加餐</option>
+          <option value="post">练后餐</option>
+          <option value="snack">零食/加餐</option>
         </select>
         <select id="foodFilterType">
           <option value="all">全部类型</option>
+          <option value="combo">组合餐</option>
           <option value="protein">蛋白质</option>
           <option value="carb">主食/碳水</option>
           <option value="veg">蔬菜</option>
           <option value="fruit">水果</option>
           <option value="drink">饮品</option>
+          <option value="snack">减脂零食</option>
           <option value="other">其他</option>
         </select>
       </div>
@@ -87,13 +93,10 @@
   <dialog id="firstRunDialog" class="sheet-dialog">
     <form id="firstRunForm" class="sheet" novalidate>
       <h2>先设置你的目标</h2>
-      <p class="muted">这些数据只存在你的手机浏览器本地，用来粗略估算减脂热量。后面可以随时修改。</p>
+      <p class="muted">这些数据只存在你的手机浏览器本地，用来粗略估算无氧日、有氧日和休息日的减脂摄入。后面可以随时修改。</p>
       <div class="two-col">
         <label class="field">性别
-          <select id="initSex">
-            <option value="female" selected>女</option>
-            <option value="male">男</option>
-          </select>
+          <select id="initSex"><option value="female" selected>女</option><option value="male">男</option></select>
         </label>
         <label class="field">年龄
           <input id="initAge" type="number" min="10" max="90" value="21" />
@@ -111,97 +114,62 @@
         <label class="field">每日预算 ¥
           <input id="initBudget" type="number" min="0" step="0.1" value="22" />
         </label>
-        <label class="field">目标热量差 kcal
+        <label class="field">每日热量差 kcal
           <input id="initDeficit" type="number" min="0" max="1000" step="50" value="450" />
         </label>
       </div>
-      <menu class="sheet-actions">
-        <button type="submit" class="primary-btn">开始使用</button>
-      </menu>
+      <p class="note">例如 21岁、165cm、62kg、每日热量差450 kcal：无氧日约1550 kcal，蛋白120g/碳水145g/脂肪55g；有氧日约1350 kcal，蛋白110g/碳水110g/脂肪50g；休息日约1150 kcal，蛋白95g/碳水80g/脂肪45g。</p>
+      <menu class="sheet-actions"><button type="submit" class="primary-btn">开始使用</button></menu>
     </form>
   </dialog>
 
   <dialog id="settingsDialog" class="sheet-dialog">
     <form id="settingsForm" class="sheet" novalidate>
-      <div class="sheet-header">
-        <h2>设置</h2>
-        <button type="button" class="icon-btn" id="closeSettingsBtn">×</button>
+      <div class="sheet-header"><h2>设置</h2><button type="button" class="icon-btn" id="closeSettingsBtn">×</button></div>
+      <div class="two-col">
+        <label class="field">性别<select id="sexInput"><option value="female">女</option><option value="male">男</option></select></label>
+        <label class="field">年龄<input id="ageInput" type="number" min="10" max="90" /></label>
       </div>
       <div class="two-col">
-        <label class="field">性别
-          <select id="sexInput">
-            <option value="female">女</option>
-            <option value="male">男</option>
-          </select>
-        </label>
-        <label class="field">年龄
-          <input id="ageInput" type="number" min="10" max="90" />
-        </label>
+        <label class="field">身高 cm<input id="heightInput" type="number" min="100" max="230" /></label>
+        <label class="field">体重 kg<input id="weightInput" type="number" min="30" max="200" step="0.1" /></label>
       </div>
       <div class="two-col">
-        <label class="field">身高 cm
-          <input id="heightInput" type="number" min="100" max="230" />
-        </label>
-        <label class="field">体重 kg
-          <input id="weightInput" type="number" min="30" max="200" step="0.1" />
-        </label>
+        <label class="field">每日预算 ¥<input id="budgetInput" type="number" min="0" step="0.1" /></label>
+        <label class="field">每日热量差 kcal<input id="deficitInput" type="number" min="0" max="1000" step="50" /></label>
       </div>
-      <div class="two-col">
-        <label class="field">每日预算 ¥
-          <input id="budgetInput" type="number" min="0" step="0.1" />
-        </label>
-        <label class="field">目标热量差 kcal
-          <input id="deficitInput" type="number" min="0" max="1000" step="50" />
-        </label>
-      </div>
-      <p class="note">训练日和休息日会分别估算热量，再减去你设置的热量差。结果仅作日常记录和饮食规划参考。</p>
-      <menu class="sheet-actions">
-        <button type="submit" class="primary-btn">保存设置</button>
-      </menu>
+      <p class="note">目标会随体重变化自动估算。随机组合会尽量不超预算、接近目标热量和三大营养素，但仍是日常参考，不是医学营养处方。</p>
+      <menu class="sheet-actions"><button type="submit" class="primary-btn">保存设置</button></menu>
     </form>
   </dialog>
 
   <dialog id="foodDialog" class="sheet-dialog">
     <form id="foodForm" class="sheet" novalidate>
-      <div class="sheet-header">
-        <h2 id="foodDialogTitle">添加食物</h2>
-        <button type="button" class="icon-btn" id="closeFoodBtn">×</button>
-      </div>
+      <div class="sheet-header"><h2 id="foodDialogTitle">添加食物</h2><button type="button" class="icon-btn" id="closeFoodBtn">×</button></div>
       <input id="editingFoodId" type="hidden" />
-      <label class="field">食物名称
-        <input id="foodNameInput" placeholder="例如：鸡蛋 / 番茄鸡蛋饭" />
-      </label>
+      <label class="field">食物名称<input id="foodNameInput" placeholder="例如：食堂番茄鸡蛋 / 红薯" /></label>
+      <label class="field">份量描述<input id="foodServingInput" placeholder="例如：120g / 1拳 / 1掌 / 1个" /></label>
       <div class="two-col">
-        <label class="field">热量 kcal
-          <input id="foodCaloriesInput" type="number" min="0" step="1" placeholder="例如：150" />
-        </label>
-        <label class="field">价格 ¥
-          <input id="foodPriceInput" type="number" min="0" step="0.1" placeholder="例如：3.5" />
-        </label>
+        <label class="field">热量 kcal<input id="foodCaloriesInput" type="number" min="0" step="1" placeholder="例如：150" /></label>
+        <label class="field">价格 ¥<input id="foodPriceInput" type="number" min="0" step="0.1" placeholder="例如：3.5" /></label>
       </div>
       <div class="two-col">
-        <label class="field">蛋白质 g
-          <input id="foodProteinInput" type="number" min="0" step="0.1" placeholder="可空" />
-        </label>
-        <label class="field">碳水 g
-          <input id="foodCarbInput" type="number" min="0" step="0.1" placeholder="可空" />
-        </label>
+        <label class="field">蛋白质 g<input id="foodProteinInput" type="number" min="0" step="0.1" placeholder="可空" /></label>
+        <label class="field">碳水 g<input id="foodCarbInput" type="number" min="0" step="0.1" placeholder="可空" /></label>
       </div>
       <div class="two-col">
-        <label class="field">脂肪 g
-          <input id="foodFatInput" type="number" min="0" step="0.1" placeholder="可空" />
-        </label>
-        <label class="field">膳食纤维 g
-          <input id="foodFiberInput" type="number" min="0" step="0.1" placeholder="可空" />
-        </label>
+        <label class="field">脂肪 g<input id="foodFatInput" type="number" min="0" step="0.1" placeholder="可空" /></label>
+        <label class="field">膳食纤维 g<input id="foodFiberInput" type="number" min="0" step="0.1" placeholder="可空" /></label>
       </div>
       <label class="field">类型
         <select id="foodTypeInput">
+          <option value="combo">组合餐</option>
           <option value="protein">蛋白质</option>
           <option value="carb">主食/碳水</option>
           <option value="veg">蔬菜</option>
           <option value="fruit">水果</option>
           <option value="drink">饮品</option>
+          <option value="snack">减脂零食</option>
           <option value="other">其他</option>
         </select>
       </label>
@@ -210,34 +178,25 @@
         <label><input type="checkbox" name="mealTags" value="breakfast" /> 早餐</label>
         <label><input type="checkbox" name="mealTags" value="lunch" /> 午餐</label>
         <label><input type="checkbox" name="mealTags" value="dinner" /> 晚餐</label>
-        <label><input type="checkbox" name="mealTags" value="snack" /> 加餐</label>
+        <label><input type="checkbox" name="mealTags" value="post" /> 练后餐</label>
+        <label><input type="checkbox" name="mealTags" value="snack" /> 零食/加餐</label>
       </fieldset>
-      <label class="field">备注
-        <textarea id="foodNoteInput" rows="2" placeholder="例如：食堂二楼 / 外卖常点 / 训练后适合"></textarea>
-      </label>
-      <menu class="sheet-actions">
-        <button id="deleteFoodBtn" type="button" class="ghost-btn danger" hidden>删除</button>
-        <button type="submit" class="primary-btn">保存</button>
-      </menu>
+      <label class="field">备注<textarea id="foodNoteInput" rows="2" placeholder="例如：食堂二楼 / 练后适合 / 低糖版本"></textarea></label>
+      <menu class="sheet-actions"><button id="deleteFoodBtn" type="button" class="ghost-btn danger" hidden>删除</button><button type="submit" class="primary-btn">保存</button></menu>
     </form>
   </dialog>
 
   <dialog id="backupDialog" class="sheet-dialog">
     <section class="sheet compact-sheet">
-      <div class="sheet-header">
-        <h2>备份与恢复</h2>
-        <button type="button" class="icon-btn" id="closeBackupBtn">×</button>
-      </div>
+      <div class="sheet-header"><h2>备份与恢复</h2><button type="button" class="icon-btn" id="closeBackupBtn">×</button></div>
       <p class="muted">备份包含设置、食物库和当前生成的组合。导入会覆盖当前数据。</p>
       <div class="backup-actions">
         <button id="exportBtn" type="button" class="primary-btn">导出备份</button>
-        <label class="outline-btn import-label">导入备份
-          <input id="importInput" type="file" accept="application/json,.json" hidden />
-        </label>
+        <label class="outline-btn import-label">导入备份<input id="importInput" type="file" accept="application/json,.json" hidden /></label>
       </div>
     </section>
   </dialog>
 
-  <script src="app.js?v=1"></script>
+  <script src="app-macro-v2.js"></script>
 </body>
 </html>

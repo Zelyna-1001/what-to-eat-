@@ -1,23 +1,13 @@
 {
   "name": "今天吃什么",
   "short_name": "今天吃什么",
-  "description": "按预算、训练日/休息日热量目标和营养均衡随机组合早午晚餐。",
+  "description": "按无氧日、有氧日、休息日目标热量、预算和营养均衡随机组合早午晚餐和练后餐。",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f6fbf6",
   "theme_color": "#b7e4c7",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ]
 }
